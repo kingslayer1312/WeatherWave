@@ -54,6 +54,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (conditions.contains(condition)) {
       return "mist";
     }
+    else if (condition.toLowerCase() == "clear"
+        && DateTime.now().hour < 19
+        && DateTime.now().hour > 7) {
+      return "sun";
+    }
+    else if (condition.toLowerCase() == "clear") {
+      return "moon";
+    }
     else {
       return condition.toLowerCase();
     }
@@ -68,7 +76,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.orange.shade500, Colors.deepPurple.shade800, Colors.black],
+          colors: [Color(0x00171738), Color(0xFF437C90), Color(0xFFA1D2CE)],
         ),
       ),
       child: Scaffold(
@@ -95,22 +103,45 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 Text(
                   "Good ${greeting()}",
                   style: GoogleFonts.comfortaa(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 40
+                    fontWeight: FontWeight.w800,
+                    fontSize: 40,
+                    color: Colors.white70
                   ),
                 ),
                 Text(
-                  _weather?.city ?? "",
+                  "${_weather?.city}" ?? "",
+                  style: GoogleFonts.quicksand(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 25,
+                    color: Colors.white60
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
                 ),
                 Image(
-                  image: AssetImage("assets/images/${findCondition()}.png")
+                  image: AssetImage("assets/images/${findCondition()}.png"),
+                  width: 300,
+                  height: 300,
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Text(
-                  _weather?.temperature.toStringAsFixed(0) ?? "",
+                  "${_weather?.temperature.toStringAsFixed(0)}°C" ?? "",
+                  style: GoogleFonts.comfortaa(
+                    fontSize: 70,
+                    fontWeight: FontWeight.w800
+                  ),
                 ),
                 Text(
                   _weather?.condition.toString() ?? "",
-                )
+                  style: GoogleFonts.quicksand(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 30
+                  ),
+                ),
+
               ],
             ),
           )
