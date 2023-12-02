@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_wave/services/weather_service.dart';
 import '../key/api_key.dart';
 import '../model/weather_model.dart';
@@ -47,6 +48,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return 'Evening';
   }
 
+  String findCondition() {
+    String? condition = _weather?.condition ?? "";
+    List<String> conditions = ["Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado"];
+    if (conditions.contains(condition)) {
+      return "mist";
+    }
+    else {
+      return condition.toLowerCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,9 +66,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.red, Colors.yellow, Colors.green],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.orange.shade500, Colors.deepPurple.shade800, Colors.black],
         ),
       ),
       child: Scaffold(
@@ -77,14 +89,27 @@ class _WeatherScreenState extends State<WeatherScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 20,
+                ),
                 Text(
                   "Good ${greeting()}",
+                  style: GoogleFonts.comfortaa(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 40
+                  ),
                 ),
                 Text(
                   _weather?.city ?? "",
                 ),
+                Image(
+                  image: AssetImage("assets/images/${findCondition()}.png")
+                ),
                 Text(
                   _weather?.temperature.toStringAsFixed(0) ?? "",
+                ),
+                Text(
+                  _weather?.condition.toString() ?? "",
                 )
               ],
             ),
