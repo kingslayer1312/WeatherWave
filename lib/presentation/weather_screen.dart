@@ -69,22 +69,33 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   List<Color> findPalette() {
-    String? condition = "clouds"; // findCondition()
+    String? condition = findCondition();
     List<Color> palette = [];
     switch (condition) {
       case "sun":
         palette = [Colors.blue.shade300, Colors.purple.shade100, Colors.amber.shade300, Colors.black87, Colors.black87];
         break;
       case "moon":
-        palette = [Colors.blueGrey.shade900, Colors.blueGrey.shade800, Colors.black87, Colors.white70, Colors.white];
+        palette = [Colors.black26, Colors.blueGrey.shade900, Colors.black87, Colors.white70, Colors.white];
         break;
       case "clouds":
-        palette = [Colors.amber.shade800, Colors.deepPurple.shade700, Colors.black54, Colors.black87, Colors.white];
+        palette = [Colors.blue.shade700, Colors.lightBlue.shade300, Colors.cyan.shade900, Colors.black87, Colors.black87];
         break;
       case "drizzle":
-        palette = [];
+        palette = [Colors.blueGrey.shade700, Colors.blueGrey.shade500, Colors.black26, Colors.white70, Colors.white];
         break;
-
+      case "rain":
+        palette = [Colors.blueGrey.shade900, Colors.blueGrey.shade700, Colors.black54, Colors.white70, Colors.white];
+        break;
+      case "thunderstorm":
+        palette = [Colors.black54, Colors.blueGrey.shade900, Colors.black87, Colors.white, Colors.white60];
+        break;
+      case "mist":
+        palette = [Colors.grey.shade600, Colors.grey.shade300, Colors.grey.shade800, Colors.black87, Colors.black87];
+        break;
+      case "snow":
+        palette = [Color(0xFF88C0D0), Color(0xFF5E81AC), Color(0xFF4C566A), Colors.black87, Colors.black87];
+        break;
     }
 
     return palette;
@@ -143,7 +154,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   height: 40,
                 ),
                 Image(
-                  image: AssetImage("assets/images/clouds.png"), // ${findCondition()}
+                  image: AssetImage("assets/images/${findCondition()}.png"), //
                   width: 270,
                   height: 270,
                 ),
@@ -182,9 +193,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         Text(
                           "${_weather?.maximumTemperature.toStringAsFixed(0)}°C" ?? "",
                           style: GoogleFonts.quicksand(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: findPalette().elementAt(4)
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: findPalette().elementAt(4)
                           ),
                         )
                       ],
@@ -232,7 +243,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     )
                   ],
                 )
-
               ],
             ),
           )
