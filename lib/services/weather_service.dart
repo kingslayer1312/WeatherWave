@@ -11,8 +11,8 @@ class WeatherService {
 
   WeatherService(this.API_KEY);
 
-  Future<Weather> getWeather(String city) async {
-    final response = await http.get(Uri.parse("$BASE_URL?q=$city&appid=$API_KEY&units=metric"));
+  Future<Weather> getWeather(String latitude, String longitude) async {
+    final response = await http.get(Uri.parse("$BASE_URL?lat=$latitude&lon=$longitude&appid=$API_KEY&units=metric"));
 
     if (response.statusCode == 200) {
       return Weather.fromJson(jsonDecode(response.body));
@@ -22,21 +22,20 @@ class WeatherService {
     }
   }
 
-  Future<String> getCurrentCity() async {
+  Future<List<String>> getCurrentCity() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
 
     Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high
+      desiredAccuracy: LocationAccuracy.medium
     );
 
     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
 
     String? city = placemarks[0].locality;
 
-    return city ?? "";
+    return [city ?? "", position.latitude.toStringAsFixed(2), position.longitude.toStringAsFixed(2)];
   }
-
 }

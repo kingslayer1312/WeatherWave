@@ -18,10 +18,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Weather? _weather;
 
   _fetchWeather() async {
-    final city = await _weatherService.getCurrentCity();
-
+    final location = await _weatherService.getCurrentCity();
+    final latitude = location[1];
+    final longitude = location[2];
     try {
-      final weather = await _weatherService.getWeather(city);
+      final weather = await _weatherService.getWeather(latitude, longitude);
       setState(() {
         _weather = weather;
       });
@@ -67,6 +68,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
+  List<Color> findPalette() {
+    String? condition = "clouds"; // findCondition()
+    List<Color> palette = [];
+    switch (condition) {
+      case "sun":
+        palette = [Colors.blue.shade300, Colors.purple.shade100, Colors.amber.shade300, Colors.black87, Colors.black87];
+        break;
+      case "moon":
+        palette = [Colors.blueGrey.shade900, Colors.blueGrey.shade800, Colors.black87, Colors.white70, Colors.white];
+        break;
+      case "clouds":
+        palette = [Colors.amber.shade800, Colors.deepPurple.shade700, Colors.black54, Colors.black87, Colors.white];
+        break;
+      case "drizzle":
+        palette = [];
+        break;
+
+    }
+
+    return palette;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,7 +99,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0x00171738), Color(0xFF437C90), Color(0xFFA1D2CE)],
+          colors: findPalette().sublist(0, 3),
         ),
       ),
       child: Scaffold(
@@ -105,7 +128,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   style: GoogleFonts.comfortaa(
                     fontWeight: FontWeight.w800,
                     fontSize: 40,
-                    color: Colors.white70
+                    color: findPalette().elementAt(3)
                   ),
                 ),
                 Text(
@@ -113,34 +136,102 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w400,
                     fontSize: 25,
-                    color: Colors.white60
+                    color: findPalette().elementAt(3)
                   ),
                 ),
                 SizedBox(
                   height: 40,
                 ),
                 Image(
-                  image: AssetImage("assets/images/${findCondition()}.png"),
-                  width: 300,
-                  height: 300,
+                  image: AssetImage("assets/images/clouds.png"), // ${findCondition()}
+                  width: 270,
+                  height: 270,
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 25,
                 ),
                 Text(
                   "${_weather?.temperature.toStringAsFixed(0)}°C" ?? "",
                   style: GoogleFonts.comfortaa(
                     fontSize: 70,
-                    fontWeight: FontWeight.w800
+                    fontWeight: FontWeight.w800,
+                      color: findPalette().elementAt(4)
                   ),
                 ),
                 Text(
                   _weather?.condition.toString() ?? "",
                   style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w500,
-                    fontSize: 30
+                    fontSize: 30,
+                    color: findPalette().elementAt(4)
                   ),
                 ),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Image(
+                          image: AssetImage("assets/images/hot.png"),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Text(
+                          "${_weather?.maximumTemperature.toStringAsFixed(0)}°C" ?? "",
+                          style: GoogleFonts.quicksand(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: findPalette().elementAt(4)
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 60,
+                    ),
+                    Column(
+                      children: [
+                        Image(
+                          image: AssetImage("assets/images/humidity.png"),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Text(
+                          "${_weather?.humidity.toStringAsFixed(0)}%" ?? "",
+                          style: GoogleFonts.quicksand(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: findPalette().elementAt(4)
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 60,
+                    ),
+                    Column(
+                      children: [
+                        Image(
+                          image: AssetImage("assets/images/cold.png"),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Text(
+                          "${_weather?.minimumTemperature.toStringAsFixed(0)}°C" ?? "",
+                          style: GoogleFonts.quicksand(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: findPalette().elementAt(4)
+                          ),
+                        )
+                      ],
+
+                    )
+                  ],
+                )
 
               ],
             ),
