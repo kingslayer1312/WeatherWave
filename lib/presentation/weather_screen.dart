@@ -91,7 +91,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         palette = [Colors.black54, Colors.blueGrey.shade900, Colors.black87, Colors.white, Colors.white60];
         break;
       case "mist":
-        palette = [Colors.grey.shade600, Colors.grey.shade300, Colors.grey.shade800, Colors.black87, Colors.black87];
+        palette = [Colors.grey.shade600, Colors.grey.shade300, Colors.grey.shade900, Colors.black87, Colors.black87];
         break;
       case "snow":
         palette = [Color(0xFF88C0D0), Color(0xFF5E81AC), Color(0xFF4C566A), Colors.black87, Colors.black87];
@@ -178,7 +178,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 50,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +194,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           "${_weather?.maximumTemperature.toStringAsFixed(0)}°C" ?? "",
                           style: GoogleFonts.quicksand(
                               fontSize: 25,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                               color: findPalette().elementAt(4)
                           ),
                         )
@@ -214,7 +214,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           "${_weather?.humidity.toStringAsFixed(0)}%" ?? "",
                           style: GoogleFonts.quicksand(
                               fontSize: 25,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                               color: findPalette().elementAt(4)
                           ),
                         )
@@ -234,7 +234,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           "${_weather?.minimumTemperature.toStringAsFixed(0)}°C" ?? "",
                           style: GoogleFonts.quicksand(
                               fontSize: 25,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                               color: findPalette().elementAt(4)
                           ),
                         )
