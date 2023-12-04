@@ -68,36 +68,47 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
+  String appTheme = "minimal";
+
   List<Color> findPalette() {
     String? condition = findCondition();
     List<Color> palette = [];
-    switch (condition) {
-      case "sun":
-        palette = [Colors.blue.shade300, Colors.purple.shade100, Colors.amber.shade300, Colors.black87, Colors.black87];
-        break;
-      case "moon":
-        palette = [Colors.black26, Colors.blueGrey.shade900, Colors.black87, Colors.white70, Colors.white];
-        break;
-      case "clouds":
-        palette = [Colors.blue.shade700, Colors.lightBlue.shade300, Colors.cyan.shade900, Colors.black87, Colors.black87];
-        break;
-      case "drizzle":
-        palette = [Colors.blueGrey.shade700, Colors.blueGrey.shade500, Colors.black26, Colors.white70, Colors.white];
-        break;
-      case "rain":
-        palette = [Colors.blueGrey.shade900, Colors.blueGrey.shade700, Colors.black54, Colors.white70, Colors.white];
-        break;
-      case "thunderstorm":
-        palette = [Colors.black54, Colors.blueGrey.shade900, Colors.black87, Colors.white, Colors.white60];
-        break;
-      case "mist":
-        palette = [Colors.grey.shade600, Colors.grey.shade300, Colors.grey.shade900, Colors.black87, Colors.black87];
-        break;
-      case "snow":
-        palette = [Color(0xFF88C0D0), Color(0xFF5E81AC), Color(0xFF4C566A), Colors.black87, Colors.black87];
-        break;
-    }
 
+    if (appTheme == "minimal") {
+      palette = [const Color(0xFFE5E9F0),
+        const Color(0xFFE5E9F0),
+        const Color(0xFFE5E9F0),
+        const Color(0xFF2E3440),
+        const Color(0xFF3B4252)];
+    }
+    else if (appTheme == "standard") {
+      switch (condition) {
+        case "sun":
+          palette = [Colors.blue.shade300, Colors.purple.shade100, Colors.amber.shade300, Colors.black87, Colors.black87];
+          break;
+        case "moon":
+          palette = [Colors.black26, Colors.blueGrey.shade900, Colors.black87, Colors.white70, Colors.white];
+          break;
+        case "clouds":
+          palette = [Colors.blue.shade700, Colors.lightBlue.shade300, Colors.cyan.shade900, Colors.black87, Colors.black87];
+          break;
+        case "drizzle":
+          palette = [Colors.blueGrey.shade700, Colors.blueGrey.shade500, Colors.black26, Colors.white70, Colors.white];
+          break;
+        case "rain":
+          palette = [Colors.blueGrey.shade900, Colors.blueGrey.shade700, Colors.black54, Colors.white70, Colors.white];
+          break;
+        case "thunderstorm":
+          palette = [Colors.black54, Colors.blueGrey.shade900, Colors.black87, Colors.white, Colors.white60];
+          break;
+        case "mist":
+          palette = [Colors.grey.shade600, Colors.grey.shade300, Colors.grey.shade900, Colors.black87, Colors.black87];
+          break;
+        case "snow":
+          palette = [Color(0xFF88C0D0), Color(0xFF5E81AC), Color(0xFF4C566A), Colors.black87, Colors.black87];
+          break;
+      }
+    }
     return palette;
   }
 
@@ -154,7 +165,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   height: 40,
                 ),
                 Image(
-                  image: AssetImage("assets/images/${findCondition()}.png"), //
+                  image: AssetImage("assets/images/$appTheme/${findCondition()}.png"), //
                   width: 270,
                   height: 270,
                 ),
@@ -186,7 +197,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     Column(
                       children: [
                         Image(
-                          image: AssetImage("assets/images/hot.png"),
+                          image: AssetImage("assets/images/$appTheme/hot.png"),
                           height: 50,
                           width: 50,
                         ),
@@ -206,7 +217,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     Column(
                       children: [
                         Image(
-                          image: AssetImage("assets/images/humidity.png"),
+                          image: AssetImage("assets/images/$appTheme/humidity.png"),
                           height: 50,
                           width: 50,
                         ),
@@ -226,7 +237,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     Column(
                       children: [
                         Image(
-                          image: AssetImage("assets/images/cold.png"),
+                          image: AssetImage("assets/images/$appTheme/cold.png"),
                           height: 50,
                           width: 50,
                         ),
