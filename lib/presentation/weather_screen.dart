@@ -16,19 +16,27 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   final _weatherService = WeatherService(API_KEY);
   Weather? _weather;
+  DateTime? _lastApiCallTime;
+  late List<Color> _currentPalette;
 
-  _fetchWeather() async {
-    final location = await _weatherService.getCurrentCity();
-    final latitude = location[1];
-    final longitude = location[2];
-    try {
-      final weather = await _weatherService.getWeather(latitude, longitude);
-      setState(() {
-        _weather = weather;
-      });
-    }
-    catch (e) {
-      print("Error");
+  Future<void> _fetchWeather() async {
+    // Check if enough time has passed since the last API call (5 minutes)
+    if (_lastApiCallTime == null ||
+        DateTime.now().difference(_lastApiCallTime!) > Duration(minutes: 5)) {
+      final location = await _weatherService.getCurrentCity();
+      final latitude = location[1];
+      final longitude = location[2];
+      try {
+        final weather = await _weatherService.getWeather(latitude, longitude);
+        setState(() {
+          _weather = weather;
+        });
+
+        // Update the last API call time
+        _lastApiCallTime = DateTime.now();
+      } catch (e) {
+        print("Error");
+      }
     }
   }
 
@@ -36,6 +44,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     super.initState();
     _fetchWeather();
+    _currentPalette = findPalette(appTheme);
   }
 
   String greeting() {
@@ -63,6 +72,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
     else if (condition.toLowerCase() == "clear") {
       return "moon";
     }
+    else if (condition.toLowerCase() == "") {
+      return "fallback";
+    }
     else {
       return condition.toLowerCase();
     }
@@ -70,7 +82,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   String appTheme = "minimal";
 
-  List<Color> findPalette() {
+  List<Color> findPalette(String appTheme) {
     String? condition = findCondition();
     List<Color> palette = [];
 
@@ -107,9 +119,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
         case "snow":
           palette = [Color(0xFF88C0D0), Color(0xFF5E81AC), Color(0xFF4C566A), Colors.black87, Colors.black87];
           break;
+        case "fallback":
+          palette = [Colors.blue.shade300, Colors.purple.shade100, Colors.amber.shade300, Colors.black87, Colors.black87];
+          break;
       }
     }
     return palette;
+  }
+  
+  String changeThemeButtonText(String appTheme) {
+    if (appTheme == "minimal") {
+      return "STANDARD";
+    }
+    else {
+      return "MINIMAL";
+    }
   }
 
   @override
@@ -121,7 +145,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: findPalette().sublist(0, 3),
+          colors: findPalette(appTheme).sublist(0, 3),
         ),
       ),
       child: Scaffold(
@@ -150,15 +174,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   style: GoogleFonts.comfortaa(
                     fontWeight: FontWeight.w800,
                     fontSize: 40,
-                    color: findPalette().elementAt(3)
+                    color: findPalette(appTheme).elementAt(3)
                   ),
                 ),
                 Text(
-                  "${_weather?.city}" ?? "",
+                  _weather?.city ?? "Fetching location...",
                   style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w400,
                     fontSize: 25,
-                    color: findPalette().elementAt(3)
+                    color: findPalette(appTheme).elementAt(3)
                   ),
                 ),
                 SizedBox(
@@ -172,20 +196,33 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 SizedBox(
                   height: 25,
                 ),
-                Text(
-                  "${_weather?.temperature.toStringAsFixed(0)}°C" ?? "",
-                  style: GoogleFonts.comfortaa(
-                    fontSize: 70,
-                    fontWeight: FontWeight.w800,
-                      color: findPalette().elementAt(4)
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _weather?.temperature.toStringAsFixed(0) ?? "--",
+                      style: GoogleFonts.comfortaa(
+                          fontSize: 70,
+                          fontWeight: FontWeight.w800,
+                          color: findPalette(appTheme).elementAt(4)
+                      ),
+                    ),
+                    Text(
+                      "°C",
+                      style: GoogleFonts.comfortaa(
+                          fontSize: 70,
+                          fontWeight: FontWeight.w800,
+                          color: findPalette(appTheme).elementAt(4)
+                      )
+                    )
+                  ],
                 ),
                 Text(
-                  _weather?.condition.toString() ?? "",
+                  _weather?.condition.toString() ?? "Fetching condition...",
                   style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w500,
                     fontSize: 30,
-                    color: findPalette().elementAt(4)
+                    color: findPalette(appTheme).elementAt(4)
                   ),
                 ),
                 SizedBox(
@@ -201,13 +238,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           height: 50,
                           width: 50,
                         ),
-                        Text(
-                          "${_weather?.maximumTemperature.toStringAsFixed(0)}°C" ?? "",
-                          style: GoogleFonts.quicksand(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: findPalette().elementAt(4)
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              _weather?.maximumTemperature.toStringAsFixed(0) ?? "--",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            ),
+                            Text(
+                              "°C",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            )
+                          ],
                         )
                       ],
                     ),
@@ -221,13 +270,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           height: 50,
                           width: 50,
                         ),
-                        Text(
-                          "${_weather?.humidity.toStringAsFixed(0)}%" ?? "",
-                          style: GoogleFonts.quicksand(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: findPalette().elementAt(4)
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              _weather?.humidity.toStringAsFixed(0) ?? "--",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            ),
+                            Text(
+                              "%",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            )
+                          ],
                         )
                       ],
                     ),
@@ -241,18 +302,55 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           height: 50,
                           width: 50,
                         ),
-                        Text(
-                          "${_weather?.minimumTemperature.toStringAsFixed(0)}°C" ?? "",
-                          style: GoogleFonts.quicksand(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: findPalette().elementAt(4)
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              _weather?.minimumTemperature.toStringAsFixed(0) ?? "--",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            ),
+                            Text(
+                              "°C",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme).elementAt(4)
+                              ),
+                            )
+                          ],
                         )
                       ],
 
                     )
                   ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            appTheme = (appTheme == "minimal") ? "standard" : "minimal";
+                            _currentPalette = findPalette(appTheme);
+                          });
+                          },
+                        child: Text(
+                          changeThemeButtonText(appTheme)
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(findPalette(appTheme)[4]),
+                          foregroundColor: MaterialStateProperty.all<Color>(findPalette(appTheme)[1])
+                        ),
+                      )
+                    ],
+                  ),
                 )
               ],
             ),
