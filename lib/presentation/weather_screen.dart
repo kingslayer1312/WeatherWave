@@ -126,15 +126,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
     return palette;
   }
-  
-  String changeThemeButtonText(String appTheme) {
-    if (appTheme == "minimal") {
-      return "STANDARD";
-    }
-    else {
-      return "MINIMAL";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +147,48 @@ class _WeatherScreenState extends State<WeatherScreen> {
           elevation: 0,
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarBrightness: Brightness.dark
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: findPalette(appTheme)[1],
+                ),
+                child: Text(
+                  'WeatherWave',
+                  style: GoogleFonts.comfortaa(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w600,
+                      color: findPalette(appTheme)[4]
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Image(
+                  image: AssetImage(
+                      "assets/images/$appTheme/theme.png"
+                  ),
+                  height: 40,
+                  width: 40,
+                ),
+                title: Text(
+                    "Switch Theme",
+                    style: GoogleFonts.quicksand(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                    )
+                ),
+                onTap: () {
+                  setState(() {
+                    appTheme = (appTheme == "minimal") ? "standard" : "minimal";
+                    _currentPalette = findPalette(appTheme);
+                  });
+                },
+              )
+            ]
           ),
         ),
         body: Padding(
@@ -327,31 +360,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            appTheme = (appTheme == "minimal") ? "standard" : "minimal";
-                            _currentPalette = findPalette(appTheme);
-                          });
-                          },
-                        child: Text(
-                          changeThemeButtonText(appTheme)
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(findPalette(appTheme)[4]),
-                          foregroundColor: MaterialStateProperty.all<Color>(findPalette(appTheme)[1])
-                        ),
-                      )
-                    ],
-                  ),
-                )
               ],
             ),
           )
