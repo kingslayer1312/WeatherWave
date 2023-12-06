@@ -20,7 +20,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
   late List<Color> _currentPalette;
 
   Future<void> _fetchWeather() async {
-    // Check if enough time has passed since the last API call (5 minutes)
     if (_lastApiCallTime == null ||
         DateTime.now().difference(_lastApiCallTime!) > Duration(minutes: 5)) {
       final location = await _weatherService.getCurrentCity();
@@ -32,7 +31,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
           _weather = weather;
         });
 
-        // Update the last API call time
         _lastApiCallTime = DateTime.now();
       } catch (e) {
         print("Error");
@@ -143,6 +141,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(
+                  Icons.menu_rounded,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
+          iconTheme: IconThemeData(color: findPalette(appTheme)[4]),
           backgroundColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: const SystemUiOverlayStyle(
@@ -150,6 +162,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
         ),
         drawer: Drawer(
+          backgroundColor: findPalette(appTheme)[1],
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
@@ -179,13 +192,79 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     style: GoogleFonts.quicksand(
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
+                      color: findPalette(appTheme)[4]
                     )
                 ),
                 onTap: () {
+                  Navigator.of(context).pop();
                   setState(() {
                     appTheme = (appTheme == "minimal") ? "standard" : "minimal";
                     _currentPalette = findPalette(appTheme);
                   });
+                },
+              ),
+              ListTile(
+                leading: Image(
+                  image: AssetImage(
+                    "assets/images/$appTheme/about.png"
+                  ),
+                  height: 40,
+                  width: 40,
+                ),
+                title: Text(
+                    "About",
+                    style: GoogleFonts.quicksand(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                        color: findPalette(appTheme)[4]
+                    )
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: findPalette(appTheme)[4],
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "WeatherWave",
+                              style: GoogleFonts.comfortaa(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: findPalette(appTheme)[1]
+                              ),
+                            ),
+                          ],
+                        ),
+                        content: Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          runAlignment: WrapAlignment.center,
+                          children: [
+                            Text(
+                              "Made with ❤️ using Flutter",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: findPalette(appTheme)[1]
+                              ),
+                            ),
+                            Text(
+                              "Developed by kingslayer1312",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: findPalette(appTheme)[1]
+                              ),
+                            ),
+                          ],
+                        )
+                      );
+                    },
+                  );
                 },
               )
             ]
@@ -200,7 +279,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 20,
+                  height: 35,
                 ),
                 Text(
                   "Good ${greeting()}",
